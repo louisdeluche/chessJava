@@ -1,5 +1,5 @@
 package chess;
 
-public class Tour {
+public class Tour extends Piece {
 
 }
