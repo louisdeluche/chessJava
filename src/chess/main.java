@@ -1,9 +1,17 @@
 package chess;
 
-public class main {
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+
+public class main extends JFrame{
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		Plateau jeu = new Plateau();
+		jeu.setVisible(true);
+		jeu.setLocation(100, 130);
+		jeu.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		
+		/*System.out.println(new File("src/images/charte.png").isFile());*/
 
 	}
 
