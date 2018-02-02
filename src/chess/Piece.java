@@ -2,8 +2,8 @@ package chess;
 
 public abstract class Piece {
 	
-	private String nom;
-	private String couleur;
+	protected String nom;
+	protected String couleur;
 	
 	Piece(String nom, String couleur)
 	{
@@ -11,7 +11,7 @@ public abstract class Piece {
 		this.couleur = couleur;
 	}
 	
-	protected abstract boolean deplacementPossible();
+	protected abstract boolean deplacementPossible(Deplacement deplacement);
 
 	public String getNom() {
 		return nom;
@@ -28,4 +28,5 @@ public abstract class Piece {
 	public void setCouleur(String couleur) {
 		this.couleur = couleur;
 	}
+
 }
