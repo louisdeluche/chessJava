@@ -9,6 +9,6 @@ public class Cavalier extends Piece {
 	@Override
 	protected boolean deplacementPossible(Deplacement d) {		
 		//x / 2 == 2 si on va de deux cases vers la gauche/droite ou est egal a 0.5 si on va de deux cases en bas ou en haut
-		return d.deplacementX / d.deplacementY == 2 || d.deplacementX / d.deplacementY == 0.5;
+		return (d.deplacementX / d.deplacementY == 2 && d.deplacementX <= 2 && d.deplacementY<= 2) || (d.deplacementX / d.deplacementY == 0.5 && d.deplacementX <= 2 && d.deplacementY<= 2);
 	}
 }

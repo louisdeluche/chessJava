@@ -21,6 +21,12 @@ public class Deplacement {
 		if(depart.posY == arrive.posY) this.axeY = true;
 	}
 	
+	@Override
+	public String toString() {
+		return "Deplacement [arrive=" + arrive + ", depart=" + depart + ", deplacementX=" + deplacementX
+				+ ", deplacementY=" + deplacementY + ", axeX=" + axeX + ", axeY=" + axeY + "]";
+	}
+
 	public String getDirectionX()
 	{
 		return depart.posX - arrive.posX < 0 ? "droite" : "gauche";

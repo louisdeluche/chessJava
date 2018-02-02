@@ -14,7 +14,7 @@ public class Pion extends Piece {
 		
 		int diffMouv = d.arrive.posX - d.depart.posX;
 		
-		String direction = diffMouv > 0 ? "descendre" : "monter";
+		String direction = diffMouv < 0 ? "descendre" : "monter";
 		
 		boolean possible;
 		if(firstMouv)

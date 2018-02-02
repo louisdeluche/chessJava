@@ -7,8 +7,15 @@ public class Position {
 	
 	Position(int x, int y)
 	{
+		//x = colonne
+		//Y = ligne
 		this.posX = x;
 		this.posY = y;
+	}
+
+	@Override
+	public String toString() {
+		return "Position [posX=" + posX + ", posY=" + posY + "]";
 	}
 
 	public int getPosX() {
