@@ -44,7 +44,6 @@ public class Plateau extends JFrame {
 		this.setSize(new Dimension(565, 500));
 		this.setTitle("Jeu d'Echecs");
 		
-
 		panelGrille.setBounds(new Rectangle(0, 0, 550, 465));
 		panelGrille.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		panelGrille.setLayout(grille);
@@ -174,30 +173,21 @@ public class Plateau extends JFrame {
 	
 	public boolean deplacerPiece(Piece piece, Deplacement d)
 	{
-		Case cible = cases[d.arrive.posY][d.arrive.posX];
+		Case cible = cases[d.arrive.posX][d.arrive.posY];
 	
+		//Permet de savoir si la couleur est la meme que le pion joué
 		boolean color = true;
-		//System.out.println(piece.getCouleur());
-		System.out.println(cible.getPiece() != null);
 		if (cible.containPiece())
 		{
-			System.out.println(cible.getPiece().getCouleur());
-		
 			color = !cible.getPiece().getCouleur().equals(piece.getCouleur());
 		}
-		//System.out.println("1 "+cible.containPiece());
-		//System.out.println("2 "+ color);
-		//System.out.println("3 "+cible.containPiece());
-		//System.out.println("4 "+cheminPossible(piece, d));
-		
-		//(!cible.getPiece().getCouleur().equals(piece.getCouleur()) || cible.getPiece() == null)
-
-		
-		
-		if(color && cheminPossible(piece, d) && piece.deplacementPossible(d))
+				
+		/*System.out.println(color);
+		System.out.println(piece.deplacementPossible(d));*/
+		if(color && piece.deplacementPossible(d))
 		{
-			if(cible.getPiece().getNom() == "Roi") finPartie();			
-			//cible.setPiece(piece);		
+			if(cible.containPiece() && cible.getPiece().getNom() == "Roi") finPartie();			
+			cible.setPiece(piece);		
 			return true;
 		}	
 		return false;
@@ -251,11 +241,9 @@ public class Plateau extends JFrame {
 		
 	}
 	
-	
-	
 	public void finPartie()
 	{
-		//disable event
+		setVisible(false);
 		System.out.println("Fin de partie");
 	}
 	
@@ -294,34 +282,28 @@ public class Plateau extends JFrame {
 							colonneClic = j;
 						}
 					}		
-				}
-				
-				System.out.println(ligneClic);
-				System.out.println(colonneClic);
+				}				
+
 				
 				if((cases[colonneClic][ligneClic].getPiece() != null || pieceTampon != null))
 				{
 					Piece cible = cases[colonneClic][ligneClic].getPiece();
-					if(pieceTampon == null )
+					if(cases[colonneClic][ligneClic].containPiece() && cases[colonneClic][ligneClic].getPiece().getCouleur().equals(couleurControle))
 					{
-						//si c'est au tour de la couleur de controle de jouer
-						if(cases[colonneClic][ligneClic].getPiece().getCouleur().equals(couleurControle)){
-							//J'initialise la piece tampon a la piece sur laquelle on a clique
-							pieceTampon = cible;
-							iconeTampon = (ImageIcon)tab[colonneClic][ligneClic].getIcon();
-							temp = new Position(colonneClic,ligneClic);
-							tab[colonneClic][ligneClic].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0),5));
+						if(pieceTampon != null)
+						{	
+							tab[temp.posX][temp.posY].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));	
 						}
-						
-					}
-					else
+						pieceTampon = cible;
+						iconeTampon = (ImageIcon)tab[colonneClic][ligneClic].getIcon();
+						temp = new Position(colonneClic,ligneClic);
+						tab[colonneClic][ligneClic].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0),5));
+					}					
+					else if(pieceTampon != null)
 					{
 						Deplacement deplacement = new Deplacement(new Position(colonneClic,ligneClic), temp);
 						if(deplacerPiece(pieceTampon, deplacement))
 						{
-							//on met le tampon sur la case vide et on vide le tampon apres
-							
-							//Position de depart
 							cases[temp.posX][temp.posY].setPiece(null);
 							tab[temp.posX][temp.posY].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
 
@@ -335,8 +317,7 @@ public class Plateau extends JFrame {
 
 							couleurControle = couleurControle.equals("blanc") ? "noir" : "blanc";
 						}
-						
-						
+										
 					
 					}					
 				}
