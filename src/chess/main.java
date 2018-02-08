@@ -9,10 +9,7 @@ public class main extends JFrame{
 		Plateau jeu = new Plateau();
 		jeu.setVisible(true);
 		jeu.setLocation(100, 130);
-		jeu.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		/*System.out.println(new File("src/images/charte.png").isFile());*/
-
+		jeu.setDefaultCloseOperation(EXIT_ON_CLOSE);		
 	}
 
 }

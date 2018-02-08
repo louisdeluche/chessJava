@@ -17,20 +17,14 @@ public class Pion extends Piece {
 		String direction = diffMouv > 0 ? "descendre" : "monter";
 		
 		boolean possible;
-		System.out.println(d.depart.posX);
-		System.out.println(d.depart.posY);
-		System.out.println(d.deplacementY);
 		if(firstMouv)
 		{
-			possible = d.deplacementY <= 2 && d.deplacementX == 0;
+			possible = (d.deplacementY <= 2 && d.deplacementX == 0)  || (d.deplacementY == 1 && d.deplacementX == 1);
 		}
 		else
 		{
-			possible = d.deplacementY == 1 && d.deplacementX == 0;
+			possible = (d.deplacementY == 1 && d.deplacementX == 0) || (d.deplacementY == 1 && d.deplacementX == 1);
 		}	
-		
-		System.out.println(possible);
-		System.out.println(direction);
 		
 		return possible && ((this.couleur == "noir" && direction == "descendre") || (this.couleur == "blanc" && direction == "monter"));
 	}

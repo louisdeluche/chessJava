@@ -79,77 +79,78 @@ public class Plateau extends JFrame {
 	}
 	
 	public boolean cheminPossible(Piece piece, Deplacement d)
-	{			
-		if(piece.getNom() != "Cavalier" || piece.getNom() == "Roi")
+	{		
+		if(piece.getNom() == "Cavalier" || piece.getNom() == "Roi")
 		{
 			return true;
 		}
 		else if (piece.getNom() == "Pion")
-		{					
-			return !cases[d.arrive.posY][d.arrive.posX].containPiece();
+		{	
+			if((d.deplacementX == 1 && d.deplacementY == 1) && !cases[d.arrive.posX][d.arrive.posY].containPiece())
+			{
+				return false;
+			}
+			else if(d.deplacementX == 0 && d.deplacementY > 0)
+			{
+				int depart = d.depart.posY+1;
+				int arrive = d.arrive.posY;
+				
+				if(depart > arrive)
+				{
+					depart = d.arrive.posY;
+					arrive = d.depart.posY;
+				}
+				for(int i=depart;i < arrive; i++ )
+				{
+					if(cases[d.depart.posX][i].containPiece()) return false;
+				}
+			}
+			
+			return true;
 		}
 		
-		if(piece.getNom() == "Fou" || piece.getNom() == "Reine")
+		if(piece.getNom() == "Fou" || (piece.getNom() == "Reine" && d.deplacementX != 0 && d.deplacementY != 0))
 		{
 			int departY = d.depart.posY;
 			int departX = d.depart.posX;
 			
 			if(d.getDirectionX() == "droite" && d.getDirectionY() == "haut")
 			{
-				for(int y = departY,x = departX; y< d.arrive.posY; y++, x--)
+				for(int y = departY-1,x = departX+1; y> d.arrive.posY; y--, x++)
 				{
-					if(cases[y][x].containPiece()) return false;
+					if(cases[x][y].containPiece()) return false;
 				}
 			}
 			else if(d.getDirectionX() == "droite" && d.getDirectionY() == "bas")
 			{
-				for(int y = departY,x = departX; y< d.arrive.posY; y++, x++)
+				for(int y = departY+1,x = departX+1; y< d.arrive.posY; y++, x++)
 				{
 					if(cases[x][y].containPiece()) return false;
 				}
 			}
 			else if(d.getDirectionX() == "gauche" && d.getDirectionY() == "haut")
 			{
-				for(int y = departY,x = departX; y> d.arrive.posY; y--, x--)
+				for(int y = departY-1,x = departX-1; y> d.arrive.posY; y--, x--)
 				{
-					if(cases[y][x].containPiece()) return false;
+					if(cases[x][y].containPiece()) return false;
 				}
 			}		
-			else if(d.getDirectionX() == "droite" && d.getDirectionY() == "haut")
+			else if(d.getDirectionX() == "gauche" && d.getDirectionY() == "bas")
 			{
-				for(int y = departY,x = departX; y> d.arrive.posY; y--, x++)
+
+				for(int y = departY+1,x = departX-1; y< d.arrive.posY; y++, x--)
 				{
-					if(cases[y][x].containPiece()) return false;
+					if(cases[x][y].containPiece()) return false;
 				}
 			}	
-			
-			return true;
-			
 		}
-		if(piece.getNom() == "Tour" || piece.getNom() == "Reine")
+		if(piece.getNom() == "Tour" || (piece.getNom() == "Reine" && (d.deplacementX == 0 || d.deplacementY == 0)))
 		{
 			if(d.axeX)
 			{
-				int depart = d.depart.posY;
-				int arrive = d.arrive.posY;
-				if(d.getDirectionX() == "gauche")
-				{
-					depart = d.arrive.posY;
-					arrive = d.depart.posY;
-				}
-				
-				for(int i = depart; i < arrive; i++)
-				{
-					if(cases[i][d.depart.posX].containPiece()) return false;
-					
-				}	
-				return true;
-			}
-			else if(d.axeY)
-			{
-				int depart = d.depart.posX;
+				int depart = d.depart.posX + 1;
 				int arrive = d.arrive.posX;
-				if(d.getDirectionX() == "haut")
+				if(d.getDirectionX() == "gauche")
 				{
 					depart = d.arrive.posX;
 					arrive = d.depart.posX;
@@ -157,18 +158,32 @@ public class Plateau extends JFrame {
 				
 				for(int i = depart; i < arrive; i++)
 				{
-					if(cases[d.depart.posY][i].containPiece())
-					{
-						return false;
-					}
+					if(cases[i][d.depart.posY].containPiece()) return false;
 					
+				}	
+				return true;
+			}
+			else if(d.axeY)
+			{
+				int depart = d.depart.posY+1;
+				int arrive = d.arrive.posY;
+
+				if(d.getDirectionY() == "haut")
+				{
+					depart = d.arrive.posY;
+					arrive = d.depart.posY;
+				}
+				
+				for(int i = depart; i < arrive; i++)
+				{
+					if(cases[d.depart.posX][i].containPiece()) return false;		
 				}
 				
 				return true;
 			}
 		}
 
-		return false;	
+		return true;	
 	}
 	
 	public boolean deplacerPiece(Piece piece, Deplacement d)
@@ -181,10 +196,8 @@ public class Plateau extends JFrame {
 		{
 			color = !cible.getPiece().getCouleur().equals(piece.getCouleur());
 		}
-				
-		/*System.out.println(color);
-		System.out.println(piece.deplacementPossible(d));*/
-		if(color && piece.deplacementPossible(d))
+		
+		if(color && piece.deplacementPossible(d) && cheminPossible(piece, d))
 		{
 			if(cible.containPiece() && cible.getPiece().getNom() == "Roi") finPartie();			
 			cible.setPiece(piece);		
@@ -262,16 +275,10 @@ public class Plateau extends JFrame {
 		/** methode s'excutant si l'on clique sur la surface de jeu. La methode determine ensuite ou est-ce que l'on cliquer
 		 * et fait les action en consequence
 		 *
-		 */
-		
-		//initialise toute les variables 
-
+		 */		
 		public void mouseClicked(MouseEvent eve) {
 			
-	
-			
-
-			if (eve.getSource() instanceof JLabel) // donc on a cliqué sur un Label
+			if (eve.getSource() instanceof JLabel) //clique sur un Label
 			{
 
 				for (int i = 0; i < 8; i++)
@@ -316,184 +323,12 @@ public class Plateau extends JFrame {
 							temp = null;
 
 							couleurControle = couleurControle.equals("blanc") ? "noir" : "blanc";
-						}
-										
-					
+						}												
 					}					
 				}
-				
-				//System.out.println(cases[colonneClic][ligneClic]);
-				
-				/*
-				if((cases[colonneClic][ligneClic].getPiece() != null | pieceTampon != null) )
-				{
-					//si le tampon est null
-					if(pieceTampon == null )
-					{
-						//si c'est au tour de la couleur de controle ˆ jouer
-						if(cases[colonneClic, ligneClic].getPiece().getCouleur().equals(couleurControle)){
-							//J'initialise la piece tampon a la piece sur laquelle on a cliquŽ
-							pieceTampon = e.getCase(colonneClic, ligneClic).getPiece();
-							iconeTampon = (ImageIcon)tab[colonneClic][ligneClic].getIcon();
-							temp = new Position(colonneClic,ligneClic);
-							tab[colonneClic][ligneClic].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0),5));
-						}
-						
-					}
-					else
-					{
-						//je crŽŽ un dŽplacement
-						Deplacement deplacement = new Deplacement(temp, new Position(colonneClic,ligneClic));
-						//je vŽrifie si le dŽplacement est valide, si le chemin est possible et si il est possible, pour un pion de manger la piece
-						if ((pieceTampon.estValide(deplacement) && plateau.cheminPossible(deplacement)) | e.captureParUnPionPossible(deplacement))
-						{
-							//je crŽŽ un jLabel avec l'ic™ne de la pi�ce manger
-							JLabel manger = new JLabel(tab[colonneClic][ligneClic].getIcon());
-							manger.setHorizontalAlignment(SwingConstants.CENTER);
-							
-							//je l'ajoute au bon jPanel
-							if (couleurControle.equals("blanc"))
-								panelblanc.add(manger);
-							else		
-								panelnoir.add(manger);
-							
-							//je vŽrifie si la pi�ce manger est un roi, si oui le jeu est terminŽ et L'utilisateurs 
-							//peut choisir si il veut continuer a jouer ou non
-							if(e.getCase(colonneClic, ligneClic).getPiece() instanceof Roi)
-							{
-								if(JOptionPane.showConfirmDialog(null, "FŽlicitation vous avez gagnŽ ! DŽsirez-vous jouer de nouveau ?\n", "Mine !", JOptionPane.YES_NO_OPTION) == 0){
-									RAZ();
-									tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-								}
-
-								else
-									System.exit(0);
-
-							}
-							else//si on dŽpose la piece sur une case vide
-							{
-								//on met le tampon sur la case vide et on vide le tampon apr�s
-								e.getCase(temp.getColonne(), temp.getLigne()).setPiece(null);
-								tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-
-								tab[colonneClic][ligneClic].setIcon(iconeTampon);
-								e.getCase(colonneClic, ligneClic).setPiece(pieceTampon);
-								tab[temp.getColonne()][temp.getLigne()].setIcon(null);
-
-
-								pieceTampon = null;
-								iconeTampon = null;
-								temp = null;
-
-								couleurControle = couleurControle.equals("blanc") ? "noir" : "blanc";
-								champTexte.setText("C'est le tour aux " + couleurControle);
-							}
-						}
-						else
-						{
-							tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-							pieceTampon = null;
-							iconeTampon = null;
-							temp = null;
-
-						}
-					
-					}
-
-				}				
-
 			}
-			/*
-				for (int i = 0; i < 8; i++)
-					//je dŽtermine sur quelle Jlabel on a cliquŽ
-					for (int j = 0; j < 8; j++) 
-						if (eve.getSource() == tab[j][i]) {
-							ligneClic = i;
-							colonneClic = j;
-						}
-					//si on a cliquŽ sur une case non vide et que le tampon n'est pas null
-					if((plateau.getCase(colonneClic, ligneClic).getPiece() != null | pieceTampon != null) )
-					{
-						//si le tampon est null
-						if(pieceTampon == null )
-						{
-							//si c'est au tour de la couleur de controle ˆ jouer
-							if(plateau.getCase(colonneClic, ligneClic).getPiece().getCouleur().equals(couleurControle)){
-								//J'initialise la piece tampon a la piece sur laquelle on a cliquŽ
-								pieceTampon = e.getCase(colonneClic, ligneClic).getPiece();
-								iconeTampon = (ImageIcon)tab[colonneClic][ligneClic].getIcon();
-								temp = new Position(colonneClic,ligneClic);
-								tab[colonneClic][ligneClic].setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0),5));
-							}
-							
-						}
-						else
-						{
-							//je crŽŽ un dŽplacement
-							Deplacement deplacement = new Deplacement(temp, new Position(colonneClic,ligneClic));
-							//je vŽrifie si le dŽplacement est valide, si le chemin est possible et si il est possible, pour un pion de manger la piece
-							if ((pieceTampon.estValide(deplacement) && plateau.cheminPossible(deplacement)) | e.captureParUnPionPossible(deplacement))
-							{
-								//je crŽŽ un jLabel avec l'ic™ne de la pi�ce manger
-								JLabel manger = new JLabel(tab[colonneClic][ligneClic].getIcon());
-								manger.setHorizontalAlignment(SwingConstants.CENTER);
-								
-								//je l'ajoute au bon jPanel
-								if (couleurControle.equals("blanc"))
-									panelblanc.add(manger);
-								else		
-									panelnoir.add(manger);
-								
-								//je vŽrifie si la pi�ce manger est un roi, si oui le jeu est terminŽ et L'utilisateurs 
-								//peut choisir si il veut continuer a jouer ou non
-								if(e.getCase(colonneClic, ligneClic).getPiece() instanceof Roi)
-								{
-									if(JOptionPane.showConfirmDialog(null, "FŽlicitation vous avez gagnŽ ! DŽsirez-vous jouer de nouveau ?\n", "Mine !", JOptionPane.YES_NO_OPTION) == 0){
-										RAZ();
-										tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-									}
-
-									else
-										System.exit(0);
-
-								}
-								else//si on dŽpose la piece sur une case vide
-								{
-									//on met le tampon sur la case vide et on vide le tampon apr�s
-									e.getCase(temp.getColonne(), temp.getLigne()).setPiece(null);
-									tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-
-									tab[colonneClic][ligneClic].setIcon(iconeTampon);
-									e.getCase(colonneClic, ligneClic).setPiece(pieceTampon);
-									tab[temp.getColonne()][temp.getLigne()].setIcon(null);
-
-
-									pieceTampon = null;
-									iconeTampon = null;
-									temp = null;
-
-									couleurControle = couleurControle.equals("blanc") ? "noir" : "blanc";
-									champTexte.setText("C'est le tour aux " + couleurControle);
-								}
-							}
-							else
-							{
-								tab[temp.getColonne()][temp.getLigne()].setBorder(BorderFactory.createLineBorder(new Color(0, 0, 0),0));
-								pieceTampon = null;
-								iconeTampon = null;
-								temp = null;
-
-							}
-						
-						}
-
-					}*/
-					
-				}
-
 		}
 	}	
-
 }
 
 

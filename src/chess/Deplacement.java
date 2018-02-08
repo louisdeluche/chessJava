@@ -17,8 +17,8 @@ public class Deplacement {
 		this.deplacementX = Math.abs(arrive.posX - depart.posX);	
 		this.deplacementY = Math.abs(arrive.posY - depart.posY);		
 		
-		if(depart.posX == arrive.posX) this.axeX = true;
-		if(depart.posY == arrive.posY) this.axeY = true;
+		if(depart.posX != arrive.posX) this.axeX = true;
+		if(depart.posY != arrive.posY) this.axeY = true;
 	}
 	
 	@Override
