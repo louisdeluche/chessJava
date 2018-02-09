@@ -144,10 +144,10 @@ public class Plateau extends JFrame {
 				}
 			}	
 		}
-		if(piece.getNom() == "Tour" || (piece.getNom() == "Reine" && (d.deplacementX == 0 || d.deplacementY == 0)))
-		{
+		if(piece.getNom() == "Tour" || (piece.getNom() == "Reine" && ((d.deplacementX == 0 && d.deplacementY > 1) || (d.deplacementX > 1 && d.deplacementY == 0))))
+		{			
 			if(d.axeX)
-			{
+			{				
 				int depart = d.depart.posX + 1;
 				int arrive = d.arrive.posX;
 				if(d.getDirectionX() == "gauche")
@@ -158,8 +158,7 @@ public class Plateau extends JFrame {
 				
 				for(int i = depart; i < arrive; i++)
 				{
-					if(cases[i][d.depart.posY].containPiece()) return false;
-					
+					if(cases[i][d.depart.posY].containPiece()) return false;					
 				}	
 				return true;
 			}
@@ -196,7 +195,6 @@ public class Plateau extends JFrame {
 		{
 			color = !cible.getPiece().getCouleur().equals(piece.getCouleur());
 		}
-		
 		if(color && piece.deplacementPossible(d) && cheminPossible(piece, d))
 		{
 			if(cible.containPiece() && cible.getPiece().getNom() == "Roi") finPartie();			
